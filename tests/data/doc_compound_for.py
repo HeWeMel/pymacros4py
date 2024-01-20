@@ -1,0 +1,5 @@
+print('Yep, i is 0.')
+print('Yep, i is 1.')
+print('Yep, i is 2.')
+print('And, yep, j is 5.')
+print('And, yep, j is 4.')

@@ -1,0 +1,5 @@
+# -- packages needed for ci pipeline for qa --
+black
+coverage>=6.3
+flake8
+mypy

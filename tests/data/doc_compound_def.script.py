@@ -1,0 +1,10 @@
+def some_inlined_computation(times, acc):
+    insert('for macro_var_i in range(')
+    insert(times)
+    insert('):\n    ')
+    insert(acc)
+    insert(' = 1\n')
+insert('j = k = 0\n')
+some_inlined_computation(3, "j")
+insert('if True:\n')
+some_inlined_computation(2, "k")

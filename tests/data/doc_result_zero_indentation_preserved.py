@@ -1,0 +1,4 @@
+if True:
+    v = '''
+text
+'''
