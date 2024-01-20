@@ -3,7 +3,7 @@ import pathlib
 
 here = pathlib.Path(__file__).parent.resolve()
 
-long_description = (here / 'README.RST').read_text(encoding='utf-8')
+long_description = (here / 'README.rst').read_text(encoding='utf-8')
 
 setup(
     name="pymacros4py",
