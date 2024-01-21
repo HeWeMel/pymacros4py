@@ -8,9 +8,10 @@ long_description = (here / 'README.rst').read_text(encoding='utf-8')
 setup(
     name="pymacros4py",
     version="0.8",
-    description=("Macro preprocessor for Python code. Write your macros in Python, "
-                 + "even directly in your code. Replacements can be in-place, "
-                 + "multi-stage, and recursive. Pure Python, tiny code."),
+    description=("pymacros4py is a templating system for Python code. It is "
+                 + "based on a source-level macro preprocessor. "
+                 + "Expressions, statements, and functions in the macro domain "
+                 + "are also written in Python."),
     long_description=long_description,
     long_description_content_type="text/x-rst",
     url="https://github.com/HeWeMel/pymacros4py",
