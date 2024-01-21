@@ -7,7 +7,7 @@ long_description = (here / 'README.rst').read_text(encoding='utf-8')
 
 setup(
     name="pymacros4py",
-    version="0.8",
+    version="0.8.0.post1",
     description=("pymacros4py is a templating system for Python code. It is "
                  + "based on a source-level macro preprocessor. "
                  + "Expressions, statements, and functions in the macro domain "
