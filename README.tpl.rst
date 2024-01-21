@@ -15,8 +15,8 @@
 .. |PyPI license| image:: https://img.shields.io/pypi/l/pymacros4py.svg
    :target: https://github.com/HeWeMel/pymacros4py/blob/main/LICENSE
 
-.. |CI| image:: https://github.com/hewemel/pymacros4py/workflows/CI%20(tests,%20flake8,%20mypy)/badge.svg?branch=main
-   :target: https://github.com/hewemel/pymacros4py/actions?query=workflow%3ACI%20(pip)
+.. |CI| image:: https://github.com/HeWeMel/pymacros4py/actions/workflows/main.yml/badge.svg?branch=main
+   :target: https://github.com/HeWeMel/pymacros4py/actions/workflows/main.yml
 
 .. |CodeCov| image:: https://img.shields.io/codecov/c/gh/HeWeMel/pymacros4py/main
    :target: https://codecov.io/gh/HeWeMel/pymacros4py
