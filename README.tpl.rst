@@ -1,3 +1,33 @@
+|PyPI version| |PyPI status| |PyPI pyversions| |PyPI license| |CI| |CodeCov| |Code style| |GitHub issues|
+
+.. |PyPI version| image:: https://badge.fury.io/py/pymacros4py.svg
+   :target: https://pypi.python.org/pypi/pymacros4py/
+
+.. |PyPI status| image:: https://img.shields.io/pypi/status/pymacros4py.svg
+   :target: https://pypi.python.org/pypi/pymacros4py/
+
+.. |PyPI pyversions| image:: https://img.shields.io/pypi/pyversions/pymacros4py.svg
+   :target: https://pypi.python.org/pypi/pymacros4py/
+
+.. |PyPy versions| image:: https://img.shields.io/badge/PyPy-3.11-blue
+   :target: https://pypi.python.org/pypi/pymacros4py/
+
+.. |PyPI license| image:: https://img.shields.io/pypi/l/pymacros4py.svg
+   :target: https://github.com/HeWeMel/pymacros4py/blob/main/LICENSE
+
+.. |CI| image:: https://github.com/hewemel/pymacros4py/workflows/CI%20(tests,%20flake8,%20mypy)/badge.svg?branch=main
+   :target: https://github.com/hewemel/pymacros4py/actions?query=workflow%3ACI%20(pip)
+
+.. |CodeCov| image:: https://img.shields.io/codecov/c/gh/HeWeMel/pymacros4py/main
+   :target: https://codecov.io/gh/HeWeMel/pymacros4py
+
+.. |Code style| image:: https://img.shields.io/badge/code%20style-black-000000.svg
+   :target: https://github.com/psf/black
+
+.. |GitHub issues| image:: https://img.shields.io/github/issues/HeWeMel/pymacros4py.svg
+   :target: https://GitHub.com/HeWeMel/pymacros4py/issues/
+
+
 pymacros4py
 ===========
 

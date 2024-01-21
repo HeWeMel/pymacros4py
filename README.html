@@ -4,7 +4,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<title>pymacros4py</title>
+<title>README.rst</title>
 <style type="text/css">
 
 /*
@@ -360,17 +360,20 @@ ul.auto-toc {
 </style>
 </head>
 <body>
-<div class="document" id="pymacros4py">
-<h1 class="title">pymacros4py</h1>
+<div class="document">
 
+
+<p><a class="reference external image-reference" href="https://pypi.python.org/pypi/pymacros4py/"><object data="https://badge.fury.io/py/pymacros4py.svg" type="image/svg+xml">PyPI version</object></a> <a class="reference external image-reference" href="https://pypi.python.org/pypi/pymacros4py/"><object data="https://img.shields.io/pypi/status/pymacros4py.svg" type="image/svg+xml">PyPI status</object></a> <a class="reference external image-reference" href="https://pypi.python.org/pypi/pymacros4py/"><object data="https://img.shields.io/pypi/pyversions/pymacros4py.svg" type="image/svg+xml">PyPI pyversions</object></a> <a class="reference external image-reference" href="https://github.com/HeWeMel/pymacros4py/blob/main/LICENSE"><object data="https://img.shields.io/pypi/l/pymacros4py.svg" type="image/svg+xml">PyPI license</object></a> <a class="reference external image-reference" href="https://github.com/hewemel/pymacros4py/actions?query=workflow%3ACI%20(pip)"><img alt="CI" src="https://github.com/hewemel/pymacros4py/workflows/CI%20(tests,%20flake8,%20mypy)/badge.svg?branch=main" /></a> <a class="reference external image-reference" href="https://codecov.io/gh/HeWeMel/pymacros4py"><img alt="CodeCov" src="https://img.shields.io/codecov/c/gh/HeWeMel/pymacros4py/main" /></a> <a class="reference external image-reference" href="https://github.com/psf/black"><object data="https://img.shields.io/badge/code%20style-black-000000.svg" type="image/svg+xml">Code style</object></a> <a class="reference external image-reference" href="https://GitHub.com/HeWeMel/pymacros4py/issues/"><object data="https://img.shields.io/github/issues/HeWeMel/pymacros4py.svg" type="image/svg+xml">GitHub issues</object></a></p>
+<div class="section" id="pymacros4py">
+<h1>pymacros4py</h1>
 <div class="section" id="brief-description">
-<h1>Brief description</h1>
+<h2>Brief description</h2>
 <p>pymacros4py is a templating system for Python code. It is based on a source-level macro
 preprocessor. Expressions, statements, and functions in the macro domain are also
 written in Python.</p>
 </div>
 <div class="section" id="why-and-when">
-<h1>Why and when?</h1>
+<h2>Why and when?</h2>
 <p>Typical Python software is developed without using macros. And that for good reasons:
 Macros are not necessary. And they have serious disadvantages.</p>
 <p>But in some cases, you might want to write code that generates or manipulates
@@ -397,7 +400,7 @@ interpretation process, is better suited. See, e.g., the language lab
 <a class="reference external" href="https://pypi.org/project/mcpyrate/">mcpyrate</a>.)</p>
 </div>
 <div class="section" id="properties">
-<h1>Properties</h1>
+<h2>Properties</h2>
 <p><em>pymacros4py</em> is a templating system with the following characteristics:</p>
 <ul class="simple">
 <li>It is <strong>made for templates for Python files</strong>, e.g., macro-generated code
@@ -429,16 +432,16 @@ All examples in this README, except for a single line (excluded for
 technical reasons), are covered by tests.</p>
 </div>
 <div class="section" id="usage">
-<h1>Usage</h1>
+<h2>Usage</h2>
 <div class="section" id="installation">
-<h2>Installation</h2>
+<h3>Installation</h3>
 <p>You can get and install <em>pymacros4py</em> as follows by using <em>pip</em>:</p>
 <pre class="code shell literal-block">
 pip<span class="whitespace"> </span>install<span class="whitespace"> </span>pymacros4py
 </pre>
 </div>
 <div class="section" id="calling-pymacros4py">
-<h2>Calling pymacros4py</h2>
+<h3>Calling pymacros4py</h3>
 <p>The preprocessor can be accessed in a Python script as follows:</p>
 <pre class="code python literal-block">
 <span class="operator">&gt;&gt;&gt;</span> <span class="keyword namespace">from</span> <span class="name namespace">pymacros4py</span> <span class="keyword namespace">import</span> <span class="name">PreProcessor</span><span class="whitespace">
@@ -468,7 +471,7 @@ as attributes of the global object <em>file_options</em>:</p>
 </div>
 </div>
 <div class="section" id="templates-and-template-expansion">
-<h1>Templates and template expansion</h1>
+<h2>Templates and template expansion</h2>
 <p>A <em>template</em> consists of macro sections and text sections. A single line
 of a template can already contain several such sections.</p>
 <ul class="simple">
@@ -513,7 +516,7 @@ be mixed like this, and the macro code extends and manipulates the application c
 <p>This explanation and example already gives a good impression of how templates
 can be written. Further details are described in the following sections.</p>
 <div class="section" id="quoted-macro-code-in-templates">
-<h2>Quoted macro code in templates</h2>
+<h3>Quoted macro code in templates</h3>
 <p>One way to mark macro code in a template looks similar to a
 <strong>string starting and ending with two dollar characters</strong>.
 Single or double quotes, or triple single or double quotes can be used.</p>
@@ -566,7 +569,7 @@ $$'''</span>
 </pre>
 </div>
 <div class="section" id="indentation-in-macro-code">
-<h2>Indentation in macro code</h2>
+<h3>Indentation in macro code</h3>
 <p>Macro code in a macro section can be indented to an arbitrary local level, independently
 of other macro sections and surrounding application code. Locally, indentation needs
 to follow Python syntax. Globally, <em>pymacros4py</em> will establish a valid indentation when
@@ -620,7 +623,7 @@ $$'''</span>
 </pre>
 </div>
 <div class="section" id="macro-code-in-a-comment">
-<h2>Macro code in a comment</h2>
+<h3>Macro code in a comment</h3>
 <p>A second option to mark macro code in a template has the <strong>form of a comment,</strong>
 <strong>starting with a hash character</strong>, optionally
 followed by spaces or tabs, <strong>and two dollar characters</strong>. The macro code ends with
@@ -631,7 +634,7 @@ the macro section spans the whole line, including a trailing line break.</p>
 </pre>
 </div>
 <div class="section" id="arbitrary-python-code-as-macro-code">
-<h2>Arbitrary Python code as macro code</h2>
+<h3>Arbitrary Python code as macro code</h3>
 <p><strong>Macro code is regular Python code</strong>. A call to the predefined
 <strong>function</strong>
 <em>insert</em>
@@ -672,7 +675,7 @@ the macro section spans the whole line, including a trailing line break.</p>
 </pre>
 </div>
 <div class="section" id="indentation-of-macro-results">
-<h2>Indentation of macro results</h2>
+<h3>Indentation of macro results</h3>
 <p><strong>The results of the expansion of a macro section</strong>,
 e.g., the output of calls of function <em>insert</em>, <strong>are indented relative to the</strong>
 <strong>indentation of the first non-whitespace character of the macro section</strong> (i.e.,
@@ -752,7 +755,7 @@ preserved.</p>
 </div>
 </div>
 <div class="section" id="including-and-importing-files">
-<h1>Including and importing files</h1>
+<h2>Including and importing files</h2>
 <p>Macro code can access the <em>PreProcessor</em> object that executes the current macro
 expansion: In the macro scope, it is available as attribute <em>pp</em>.</p>
 <p>Its methods are:</p>
@@ -825,7 +828,7 @@ $$'''</span><span class="whitespace">
 but the output of the imported template is ignored.</p>
 </div>
 <div class="section" id="macro-statement-suites-spanning-multiple-sections">
-<h1>Macro statement suites spanning multiple sections</h1>
+<h2>Macro statement suites spanning multiple sections</h2>
 <p>If the code in a macro section ends within a <em>suite</em> of a Python <em>compound statement</em>
 (see <a class="reference external" href="https://docs.python.org/3/reference/compound_stmts.html">https://docs.python.org/3/reference/compound_stmts.html</a>)
 e.g., an indented block of statements after statements like <em>if</em>, <em>for</em>, or <em>def</em>,
@@ -975,7 +978,7 @@ code, but uses the unindented code as-is.</li>
 </pre>
 </div>
 <div class="section" id="def-statement-suites-spanning-multiple-sections">
-<h1>def-statement-suites spanning multiple sections</h1>
+<h2>def-statement-suites spanning multiple sections</h2>
 <p>If the suite of a <em>def</em>-statement spans multiple sections, indentation of
 generated results of the macro expansion is special-cased as follows:</p>
 <ul class="simple">
@@ -1013,9 +1016,9 @@ section. And this holds both for the macro sections and the text sections within
 suite of the <em>def</em> statement. Like that, valid indentation is established.</p>
 </div>
 <div class="section" id="debugging">
-<h1>Debugging</h1>
+<h2>Debugging</h2>
 <div class="section" id="error-messages">
-<h2>Error messages</h2>
+<h3>Error messages</h3>
 <p>In case something goes wrong, <em>pymacros4py</em> tries to give helpful error messages.</p>
 <p><strong>Example: Wrong indentation within macro code</strong></p>
 <pre class="code python literal-block">
@@ -1105,7 +1108,7 @@ Here it is:</p>
 </pre>
 </div>
 <div class="section" id="comparing-results">
-<h2>Comparing results</h2>
+<h3>Comparing results</h3>
 <p>Method <em>expand_file_to_file</em> offers an option <em>diffs_to_result_file</em> that shows
 the differences between the results of the macro expansion and the current content
 of the result file.</p>
@@ -1131,7 +1134,7 @@ section <em>Templates and template expansion</em>.</p>
 </pre>
 </div>
 <div class="section" id="viewing-the-template-script">
-<h2>Viewing the template script</h2>
+<h3>Viewing the template script</h3>
 <p>When an exception is raised during the execution of a generated template script,
 e.g., if there is an error in your Python macro code, the
 script will be automatically stored (as temporary file, with the platform specific
@@ -1160,7 +1163,7 @@ additional bookkeeping code that marks when macro code starts and ends during
 the execution of the template script.</p>
 </div>
 <div class="section" id="tracing">
-<h2>Tracing</h2>
+<h3>Tracing</h3>
 <p><em>pymacros4py</em> can write a trace log during parsing of a template and during
 execution of a template script: The options <em>trace_parsing</em> and <em>trace_evaluation</em>
 of method <em>expand_file_to_file</em> activate this functionality. We demonstrate
@@ -1210,6 +1213,7 @@ the expansion result instead of storing it to a file.</p>
 </span><span class="operator">&lt;</span><span class="name">BLANKLINE</span><span class="operator">&gt;</span><span class="whitespace">
 </span><span class="operator">&lt;</span><span class="name">BLANKLINE</span><span class="operator">&gt;</span>
 </pre>
+</div>
 </div>
 </div>
 </div>
