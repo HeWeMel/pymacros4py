@@ -112,6 +112,10 @@ The code of *pymacros4py* is tested with 100% code coverage.
 All examples in this README, except for a single line (excluded for
 technical reasons), are covered by tests.
 
+So far, *SemVer* is not used, and the package is marked as *beta*. The reason is
+not a lack of quality, but the practical experience is not sufficient to guarantee
+stability of the API.
+
 
 Usage
 -----
@@ -150,10 +154,16 @@ content, you can disable macro expansion for this content.
 
 The method *expand_file_to_file* offers the following keyword parameter:
 
-- *diff*: bool = False. True means that the result is not written to the
-  output file, but compared to the content of the file, and the result
-  of the comparison is printed to *stdout*.
+- *diffs_to_result_file*: bool = False. True means that the result is not written to
+  the output file, but compared to the content of the file, and the result
+  of the comparison is returned.
  
+
+.. code-block:: python
+
+    >>> pp.expand_file_to_file('tpl/README.rst', 'README.rst', diffs_to_result_file=True)
+    ''
+
 If you need specific arguments for the *encoding*, *errors*, or *newlines*
 parameters used for opening files (see Python function *open*), you can set these
 as attributes of the global object *file_options*:
@@ -762,35 +772,29 @@ This template leads to the following exception:
 
     # $$ insert_content("tests/data/error_result_indentation_inconsistent.tpl.py")
 
-This template leads to the following exception: 
+This template leads to an exception:
 
 .. code-block:: python
 
-    >>> pp.expand_file_to_file("tests/data/error_result_indentation_inconsistent.tpl.py", "out.py"
-    ... )   # doctest: +NORMALIZE_WHITESPACE, +ELLIPSIS
-    Traceback (most recent call last):
-    RuntimeError: Error when executing template script ...
+    >>> try:
+    ...     pp.expand_file_to_file("tests/data/error_result_indentation_inconsistent.tpl.py",
+    ...                            "out.py")
+    ... except Exception as e:
+    ...     print(type(e).__name__)  # doctest: +NORMALIZE_WHITESPACE, +ELLIPSIS
+    RuntimeError
 
-In this example output, the name of the template file is left out, because it
-is not constant. Also omitted is the first half of the error message,
-because Python doctests cannot handle sequences of exceptions (to my knowledge).
-Here it is:
+(Depending on the used Python version, the exception contains notes. If there
+are notes, the doctest module cannot correctly parse them. And if not, the doctest
+cannot handle this version-specific deviation of the results. So, above, we only
+check that the expected exception occurs.)
 
-.. code-block:: python
-
-    RuntimeError: File "tests/data/error_result_indentation_inconsistent.tpl.py", line 2:
-    Output syntax error: indentation of the following line of the results of
-    the template script from the above given template line is not an extension
-    of the base indentation of these results:
-    >  # Second line indented, but less than the first<
-    (Start of line shown enclosed by characters '>' and '<')
 
 Comparing results
 .................
 
-Method *expand_file_to_file* offers an option *diffs_to_result_file* that shows
+Method *expand_file_to_file* offers an option *diffs_to_result_file* that returns
 the differences between the results of the macro expansion and the current content
-of the result file.
+of the result file. If there are no differences, the empty string is returned.
 
 **Example:** Showing results of a change in a template
 
@@ -805,13 +809,14 @@ Now, we compare against the result we have gotten there:
 
 .. code-block:: python
 
-    >>> pp.expand_file_to_file("tests/data/diff_templ_and_templ_exp.tpl.py",
-    ...                        "tests/data/doc_templ_and_templ_exp.py",
-    ...                        diffs_to_result_file = True)
-    - x = 6
-    ?     ^
-    + x = 9
-    ?     ^
+    >>> print(pp.expand_file_to_file("tests/data/diff_templ_and_templ_exp.tpl.py",
+    ...                              "tests/data/doc_templ_and_templ_exp.py",
+    ...                              diffs_to_result_file = True))
+    --- current content
+    +++ expansion result
+    @@ -1 +1 @@
+    -x = 6
+    +x = 9
     <BLANKLINE>
 
 
@@ -906,3 +911,16 @@ the expansion result instead of storing it to a file.
     <
     <BLANKLINE>
     <BLANKLINE>
+
+
+Changelog
+.........
+
+**v0.8.1** (2024-02-11)
+
+- Error messages and format of text differences improved
+- Source formatted with black default 2024
+
+**v0.8.0** (2024-01-21)
+
+- First published version

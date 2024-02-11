@@ -1,6 +1,12 @@
+'''$$
+import time
+def current_year():
+    now = time.gmtime()
+    return time.strftime('%Y', now)
+$$'''
 MIT License
 
-Copyright (c) 2023 - 2024 HeWeMel
+Copyright (c) 2023 - '$$ insert(current_year()) $$' HeWeMel
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

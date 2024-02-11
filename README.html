@@ -1087,31 +1087,25 @@ $$'''</span>
   insert(&quot;  # Second line indented, but less than the first\n&quot;)
 $$'''</span>
 </pre>
-<p>This template leads to the following exception:</p>
+<p>This template leads to an exception:</p>
 <pre class="code python literal-block">
-<span class="operator">&gt;&gt;&gt;</span> <span class="name">pp</span><span class="operator">.</span><span class="name">expand_file_to_file</span><span class="punctuation">(</span><span class="literal string double">&quot;tests/data/error_result_indentation_inconsistent.tpl.py&quot;</span><span class="punctuation">,</span> <span class="literal string double">&quot;out.py&quot;</span><span class="whitespace">
-</span><span class="operator">...</span> <span class="punctuation">)</span>   <span class="comment single"># doctest: +NORMALIZE_WHITESPACE, +ELLIPSIS</span><span class="whitespace">
-</span><span class="name">Traceback</span> <span class="punctuation">(</span><span class="name">most</span> <span class="name">recent</span> <span class="name">call</span> <span class="name">last</span><span class="punctuation">):</span><span class="whitespace">
-</span><span class="name exception">RuntimeError</span><span class="punctuation">:</span> <span class="name">Error</span> <span class="name">when</span> <span class="name">executing</span> <span class="name">template</span> <span class="name">script</span> <span class="operator">...</span>
+<span class="operator">&gt;&gt;&gt;</span> <span class="keyword">try</span><span class="punctuation">:</span><span class="whitespace">
+</span><span class="operator">...</span>     <span class="name">pp</span><span class="operator">.</span><span class="name">expand_file_to_file</span><span class="punctuation">(</span><span class="literal string double">&quot;tests/data/error_result_indentation_inconsistent.tpl.py&quot;</span><span class="punctuation">,</span><span class="whitespace">
+</span><span class="operator">...</span>                            <span class="literal string double">&quot;out.py&quot;</span><span class="punctuation">)</span><span class="whitespace">
+</span><span class="operator">...</span> <span class="keyword">except</span> <span class="name exception">Exception</span> <span class="keyword">as</span> <span class="name">e</span><span class="punctuation">:</span><span class="whitespace">
+</span><span class="operator">...</span>     <span class="name builtin">print</span><span class="punctuation">(</span><span class="name builtin">type</span><span class="punctuation">(</span><span class="name">e</span><span class="punctuation">)</span><span class="operator">.</span><span class="name variable magic">__name__</span><span class="punctuation">)</span>  <span class="comment single"># doctest: +NORMALIZE_WHITESPACE, +ELLIPSIS</span><span class="whitespace">
+</span><span class="name exception">RuntimeError</span>
 </pre>
-<p>In this example output, the name of the template file is left out, because it
-is not constant. Also omitted is the first half of the error message,
-because Python doctests cannot handle sequences of exceptions (to my knowledge).
-Here it is:</p>
-<pre class="code python literal-block">
-<span class="name exception">RuntimeError</span><span class="punctuation">:</span> <span class="name">File</span> <span class="literal string double">&quot;tests/data/error_result_indentation_inconsistent.tpl.py&quot;</span><span class="punctuation">,</span> <span class="name">line</span> <span class="literal number integer">2</span><span class="punctuation">:</span><span class="whitespace">
-</span><span class="name">Output</span> <span class="name">syntax</span> <span class="name">error</span><span class="punctuation">:</span> <span class="name">indentation</span> <span class="name">of</span> <span class="name">the</span> <span class="name">following</span> <span class="name">line</span> <span class="name">of</span> <span class="name">the</span> <span class="name">results</span> <span class="name">of</span><span class="whitespace">
-</span><span class="name">the</span> <span class="name">template</span> <span class="name">script</span> <span class="keyword namespace">from</span> <span class="name namespace">the</span> <span class="name">above</span> <span class="name">given</span> <span class="name">template</span> <span class="name">line</span> <span class="operator word">is</span> <span class="operator word">not</span> <span class="name">an</span> <span class="name">extension</span><span class="whitespace">
-</span><span class="name">of</span> <span class="name">the</span> <span class="name">base</span> <span class="name">indentation</span> <span class="name">of</span> <span class="name">these</span> <span class="name">results</span><span class="punctuation">:</span><span class="whitespace">
-</span><span class="operator">&gt;</span>  <span class="comment single"># Second line indented, but less than the first&lt;</span><span class="whitespace">
-</span><span class="punctuation">(</span><span class="name">Start</span> <span class="name">of</span> <span class="name">line</span> <span class="name">shown</span> <span class="name">enclosed</span> <span class="name">by</span> <span class="name">characters</span> <span class="literal string single">'&gt;'</span> <span class="operator word">and</span> <span class="literal string single">'&lt;'</span><span class="punctuation">)</span>
-</pre>
+<p>(Depending on the used Python version, the exception contains notes. If there
+are notes, the doctest module cannot correctly parse them. And if not, the doctest
+cannot handle this version-specific deviation of the results. So, above, we only
+check that the expected exception occurs.)</p>
 </div>
 <div class="section" id="comparing-results">
 <h3>Comparing results</h3>
-<p>Method <em>expand_file_to_file</em> offers an option <em>diffs_to_result_file</em> that shows
+<p>Method <em>expand_file_to_file</em> offers an option <em>diffs_to_result_file</em> that returns
 the differences between the results of the macro expansion and the current content
-of the result file.</p>
+of the result file. If there are no differences, the empty string is returned.</p>
 <p><strong>Example:</strong> Showing results of a change in a template</p>
 <p>In the following template, we changed the expression with respect to the example of
 section <em>Templates and template expansion</em>.</p>
@@ -1123,13 +1117,14 @@ section <em>Templates and template expansion</em>.</p>
 </pre>
 <p>Now, we compare against the result we have gotten there:</p>
 <pre class="code python literal-block">
-<span class="operator">&gt;&gt;&gt;</span> <span class="name">pp</span><span class="operator">.</span><span class="name">expand_file_to_file</span><span class="punctuation">(</span><span class="literal string double">&quot;tests/data/diff_templ_and_templ_exp.tpl.py&quot;</span><span class="punctuation">,</span><span class="whitespace">
-</span><span class="operator">...</span>                        <span class="literal string double">&quot;tests/data/doc_templ_and_templ_exp.py&quot;</span><span class="punctuation">,</span><span class="whitespace">
-</span><span class="operator">...</span>                        <span class="name">diffs_to_result_file</span> <span class="operator">=</span> <span class="keyword constant">True</span><span class="punctuation">)</span><span class="whitespace">
-</span><span class="operator">-</span> <span class="name">x</span> <span class="operator">=</span> <span class="literal number integer">6</span><span class="whitespace">
-</span><span class="error">?</span>     <span class="operator">^</span><span class="whitespace">
-</span><span class="operator">+</span> <span class="name">x</span> <span class="operator">=</span> <span class="literal number integer">9</span><span class="whitespace">
-</span><span class="error">?</span>     <span class="operator">^</span><span class="whitespace">
+<span class="operator">&gt;&gt;&gt;</span> <span class="name builtin">print</span><span class="punctuation">(</span><span class="name">pp</span><span class="operator">.</span><span class="name">expand_file_to_file</span><span class="punctuation">(</span><span class="literal string double">&quot;tests/data/diff_templ_and_templ_exp.tpl.py&quot;</span><span class="punctuation">,</span><span class="whitespace">
+</span><span class="operator">...</span>                              <span class="literal string double">&quot;tests/data/doc_templ_and_templ_exp.py&quot;</span><span class="punctuation">,</span><span class="whitespace">
+</span><span class="operator">...</span>                              <span class="name">diffs_to_result_file</span> <span class="operator">=</span> <span class="keyword constant">True</span><span class="punctuation">))</span><span class="whitespace">
+</span><span class="operator">---</span> <span class="name">current</span> <span class="name">content</span><span class="whitespace">
+</span><span class="operator">+++</span> <span class="name">expansion</span> <span class="name">result</span><span class="whitespace">
+</span><span class="operator">&#64;&#64;</span> <span class="operator">-</span><span class="literal number integer">1</span> <span class="operator">+</span><span class="literal number integer">1</span> <span class="operator">&#64;&#64;</span><span class="whitespace">
+</span><span class="operator">-</span><span class="name">x</span> <span class="operator">=</span> <span class="literal number integer">6</span><span class="whitespace">
+</span><span class="operator">+</span><span class="name">x</span> <span class="operator">=</span> <span class="literal number integer">9</span><span class="whitespace">
 </span><span class="operator">&lt;</span><span class="name">BLANKLINE</span><span class="operator">&gt;</span>
 </pre>
 </div>

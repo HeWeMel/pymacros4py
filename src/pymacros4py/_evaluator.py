@@ -248,9 +248,9 @@ def evaluate_template_script(
                     already_imported_files,
                     None,
                 )
-                global_evaluation_context.already_inserted_content[
-                    template_file
-                ] = result
+                global_evaluation_context.already_inserted_content[template_file] = (
+                    result
+                )
         insert(result)
 
     def import_from(
@@ -355,10 +355,15 @@ def evaluate_template_script(
             os.write(tmp_file, template_as_bytes)
         finally:
             os.close(tmp_file)
-
-        raise RuntimeError(
-            f"Error when executing template script {tmp_file_path}"
-        ) from exc
+        note = (
+            "Error occurred when executing template script.\n"
+            f' File "{tmp_file_path}"'
+        )
+        # Depending on the used Python version, one of the following will happen.
+        if hasattr(exc, "add_note"):  # pragma: no cover
+            exc.add_note(note)
+            raise
+        raise RuntimeError(note) from exc  # pragma: no cover
     finally:
         # If a globals_dict has been given to us, undo changes we have done there
         globals_dict.update(globals_backup)
