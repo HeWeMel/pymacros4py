@@ -535,10 +535,9 @@ preserved.
 Including and importing files
 -----------------------------
 
-Macro code can access the *PreProcessor* object that executes the current macro
-expansion: In the macro scope, it is available as attribute *pp*.
-
-Its methods are:
+Macro code can insert expansion results or import attributes, e.g.,
+function definitions, from other template files. pymacros4py offers the following
+functions for this:
 
 - **insert_from(self, template_file: str, globals_dict: Optional[dict]=None) -> None:**
 

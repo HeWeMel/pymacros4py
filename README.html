@@ -430,6 +430,9 @@ your project.</p>
 <p>The code of <em>pymacros4py</em> is tested with 100% code coverage.
 All examples in this README, except for a single line (excluded for
 technical reasons), are covered by tests.</p>
+<p>So far, <em>SemVer</em> is not used, and the package is marked as <em>beta</em>. The reason is
+not a lack of quality, but the practical experience is not sufficient to guarantee
+stability of the API.</p>
 </div>
 <div class="section" id="usage">
 <h2>Usage</h2>
@@ -457,10 +460,14 @@ have fully under your control. If you write macro code that includes unsafe file
 content, you can disable macro expansion for this content.</p>
 <p>The method <em>expand_file_to_file</em> offers the following keyword parameter:</p>
 <ul class="simple">
-<li><em>diff</em>: bool = False. True means that the result is not written to the
-output file, but compared to the content of the file, and the result
-of the comparison is printed to <em>stdout</em>.</li>
+<li><em>diffs_to_result_file</em>: bool = False. True means that the result is not written to
+the output file, but compared to the content of the file, and the result
+of the comparison is returned.</li>
 </ul>
+<pre class="code python literal-block">
+<span class="operator">&gt;&gt;&gt;</span> <span class="name">pp</span><span class="operator">.</span><span class="name">expand_file_to_file</span><span class="punctuation">(</span><span class="literal string single">'tpl/README.rst'</span><span class="punctuation">,</span> <span class="literal string single">'README.rst'</span><span class="punctuation">,</span> <span class="name">diffs_to_result_file</span><span class="operator">=</span><span class="keyword constant">True</span><span class="punctuation">)</span><span class="whitespace">
+</span><span class="literal string single">''</span>
+</pre>
 <p>If you need specific arguments for the <em>encoding</em>, <em>errors</em>, or <em>newlines</em>
 parameters used for opening files (see Python function <em>open</em>), you can set these
 as attributes of the global object <em>file_options</em>:</p>
@@ -756,9 +763,9 @@ preserved.</p>
 </div>
 <div class="section" id="including-and-importing-files">
 <h2>Including and importing files</h2>
-<p>Macro code can access the <em>PreProcessor</em> object that executes the current macro
-expansion: In the macro scope, it is available as attribute <em>pp</em>.</p>
-<p>Its methods are:</p>
+<p>Macro code can insert expansion results or import attributes, e.g.,
+function definitions, from other template files. pymacros4py offers the following
+functions for this:</p>
 <ul>
 <li><p class="first"><strong>insert_from(self, template_file: str, globals_dict: Optional[dict]=None) -&gt; None:</strong></p>
 <p>Perform a macro expansion of <em>template_file</em> within a new namespace, and
@@ -1208,6 +1215,18 @@ the expansion result instead of storing it to a file.</p>
 </span><span class="operator">&lt;</span><span class="name">BLANKLINE</span><span class="operator">&gt;</span><span class="whitespace">
 </span><span class="operator">&lt;</span><span class="name">BLANKLINE</span><span class="operator">&gt;</span>
 </pre>
+</div>
+<div class="section" id="changelog">
+<h3>Changelog</h3>
+<p><strong>v0.8.1</strong> (2024-02-11)</p>
+<ul class="simple">
+<li>Error messages and format of text differences improved</li>
+<li>Source formatted with black default 2024</li>
+</ul>
+<p><strong>v0.8.0</strong> (2024-01-21)</p>
+<ul class="simple">
+<li>First published version</li>
+</ul>
 </div>
 </div>
 </div>
