@@ -1,5 +1,5 @@
 [project]
-name = "nographs"
+name = "pymacros4py"
 version = "0.8.2"
 authors = [
   { name="Dr. Helmut Melcher", email="HeWeMel@web.de" },
