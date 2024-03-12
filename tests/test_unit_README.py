@@ -6,6 +6,7 @@ import os
 import re
 import contextlib
 import io
+import subprocess
 
 
 class ReadmeExamplesTest(unittest.TestCase):
@@ -164,6 +165,47 @@ class TestForMentionedButNotDocumentedBehaviour(unittest.TestCase):
             r"(?s)"
             r".*line 1.*line_block_macro.*insert"
             r".*line 2.*line_block_macro.*insert.*",
+        )
+
+    def test_run_process_with_file_with_exception(self) -> None:
+        """The README describes the behaviour when a
+        *subprocess.CalledProcessError* occurs, but gives no doctest."""
+        with contextlib.redirect_stdout(io.StringIO()) as f:
+            self.assertRaisesRegex(
+                subprocess.CalledProcessError,
+                r"returned non-zero exit status 1",
+                pymacros4py.run_process_with_file,
+                ["python", "-m", "non_existing_module"],
+                "some_file_path",
+            )
+        s = f.getvalue()
+        self.assertRegex(
+            s,
+            r"(?s)"
+            r".*The called process raised an exception"
+            r".*some_file_path"
+            r".*No module named non_existing_module.*",
+        )
+
+    def test_import_from_with_error(self) -> None:
+        """The README describes importing from files. The
+        indirect expectation is, that an exception also informs about the
+        template that is expanded while the exception is raised.
+        here is no explicit example in the README,
+        so, we test this here."""
+        template_path = "tests/data/testcase_import_from_with_error.tpl.py"
+        pp = pymacros4py.PreProcessor()
+        with contextlib.redirect_stdout(io.StringIO()) as f:
+            self.assertRaisesRegex(
+                RuntimeError,
+                r".*Exception when importing.*error_unexpected_end.tpl.py.*",
+                pp.expand_file,
+                template_path,
+                trace_parsing=True,
+            )
+        s = f.getvalue()
+        self.assertRegex(
+            s, r"(?s).*testcase_import_from_with_error.tpl.py.*import_from.*"
         )
 
 

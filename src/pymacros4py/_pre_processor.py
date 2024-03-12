@@ -29,20 +29,18 @@ class PreProcessor:
         # current PreProcessor.
 
     @staticmethod
-    def _diff(str1: str, str2: str, fromfile_txt: str, tofile_txt: str) -> str:
+    def diff(str1: str, str2: str, fromfile_txt: str, tofile_txt: str) -> str:
         """Compare two multi-line strings. If they are equal, return the empty string.
         Otherwise, return the result of the comparison in human-readable form.
-        Currently, function *difflib.unified_diff* is used for the comparison."""
-        return (
-            ""
-            if str1 == str2
-            else "".join(
-                difflib.unified_diff(
-                    str1.splitlines(keepends=True),
-                    str2.splitlines(keepends=True),
-                    fromfile_txt,
-                    tofile_txt,
-                )
+        Currently, function *difflib.context_diff* is used for the comparison."""
+        if str1 == str2:
+            return ""
+        return "".join(
+            difflib.context_diff(
+                str1.splitlines(keepends=True),
+                str2.splitlines(keepends=True),
+                fromfile_txt,
+                tofile_txt,
             )
         )
 
@@ -109,7 +107,7 @@ class PreProcessor:
             raise RuntimeError(note) from exc  # pragma: no cover
 
         return (
-            self._diff(template, result, "template", "expansion result")
+            self.diff(template, result, "template", "expansion result")
             if diffs_to_template
             else result
         )
@@ -140,7 +138,7 @@ class PreProcessor:
         )
         if diffs_to_result_file:
             content = read_file(result_file)
-            return self._diff(content, result, "current content", "expansion result")
+            return self.diff(content, result, "current content", "expansion result")
         else:
             write_file(result_file, result)
             return ""

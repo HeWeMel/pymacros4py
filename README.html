@@ -376,8 +376,9 @@ written in Python.</p>
 <h2>Why and when?</h2>
 <p>Typical Python software is developed without using macros. And that for good reasons:
 Macros are not necessary. And they have serious disadvantages.</p>
-<p>But in some cases, you might want to write code that generates or manipulates
-code. Then, using a template system might be a good alternative.</p>
+<p>But in some cases, you might want to write code that duplicates, manipulates, or
+generates code and inserts it into other code, while adhering to proper
+indentation. Then, using a template system might be better than starting from scratch.</p>
 <p>Here are some examples:</p>
 <ul class="simple">
 <li>You maintain a common code base for two different platforms, e.g., CPython and
@@ -387,6 +388,8 @@ for one platform from users of the other platform.</li>
 <li>There is this function that is called in performance critical code, and you
 want to inline it - but without spreading its implementation all over the project, and
 without larger modifications of your project, e.g., like switching to PyPy.</li>
+<li>Some parts of signatures or implementations in your project are identical and you
+want to keep them strictly consistent.</li>
 <li>You need to automatically generate parts of the content of some
 configuration file, and you want to make this process more explicit than using some
 generator script hidden somewhere in your project.</li>
@@ -407,7 +410,8 @@ interpretation process, is better suited. See, e.g., the language lab
 respects indentation.</li>
 <li><strong>Statements, functions, and expressions of the macro domain</strong>
 <strong>are defined as Python code</strong> -
-You do not need to learn a special macro language.
+You don't need to learn a special macro language; you just need to know how to
+embedd Python macro code in Python code.
 And you can directly use all the capabilities of Python.</li>
 <li>The preprocessor works <strong>on the source level</strong> - You see the resulting code before
 any bytecode generation / compilation / interpretation is done. And no dependency on
@@ -430,9 +434,8 @@ your project.</p>
 <p>The code of <em>pymacros4py</em> is tested with 100% code coverage.
 All examples in this README, except for a single line (excluded for
 technical reasons), are covered by tests.</p>
-<p>So far, <em>SemVer</em> is not used, and the package is marked as <em>beta</em>. The reason is
-not a lack of quality, but the practical experience is not sufficient to guarantee
-stability of the API.</p>
+<p>So far, semantic versioning is not used. There is already some practical experience
+with the library, but not enough to assess the stability of the API.</p>
 </div>
 <div class="section" id="usage">
 <h2>Usage</h2>
@@ -447,8 +450,8 @@ pip<span class="whitespace"> </span>install<span class="whitespace"> </span>pyma
 <h3>Calling pymacros4py</h3>
 <p>The preprocessor can be accessed in a Python script as follows:</p>
 <pre class="code python literal-block">
-<span class="operator">&gt;&gt;&gt;</span> <span class="keyword namespace">from</span> <span class="name namespace">pymacros4py</span> <span class="keyword namespace">import</span> <span class="name">PreProcessor</span><span class="whitespace">
-</span><span class="operator">&gt;&gt;&gt;</span> <span class="name">pp</span> <span class="operator">=</span> <span class="name">PreProcessor</span><span class="punctuation">()</span>
+<span class="operator">&gt;&gt;&gt;</span> <span class="keyword namespace">import</span> <span class="name namespace">pymacros4py</span><span class="whitespace">
+</span><span class="operator">&gt;&gt;&gt;</span> <span class="name">pp</span> <span class="operator">=</span> <span class="name">pymacros4py</span><span class="operator">.</span><span class="name">PreProcessor</span><span class="punctuation">()</span>
 </pre>
 <p>Then, the macros in a template file can be expanded as follows:</p>
 <pre class="code python literal-block">
@@ -468,13 +471,65 @@ of the comparison is returned.</li>
 <span class="operator">&gt;&gt;&gt;</span> <span class="name">pp</span><span class="operator">.</span><span class="name">expand_file_to_file</span><span class="punctuation">(</span><span class="literal string single">'tpl/README.rst'</span><span class="punctuation">,</span> <span class="literal string single">'README.rst'</span><span class="punctuation">,</span> <span class="name">diffs_to_result_file</span><span class="operator">=</span><span class="keyword constant">True</span><span class="punctuation">)</span><span class="whitespace">
 </span><span class="literal string single">''</span>
 </pre>
-<p>If you need specific arguments for the <em>encoding</em>, <em>errors</em>, or <em>newlines</em>
-parameters used for opening files (see Python function <em>open</em>), you can set these
+<p>If you need specific arguments for the parameters <em>encoding</em>, <em>errors</em>, or <em>newlines</em>
+used for opening files (see Python function <em>open</em>), you can set these
 as attributes of the global object <em>file_options</em>:</p>
 <pre class="code python literal-block">
-<span class="operator">&gt;&gt;&gt;</span> <span class="keyword namespace">from</span> <span class="name namespace">pymacros4py</span> <span class="keyword namespace">import</span> <span class="name">file_options</span><span class="whitespace">
-</span><span class="operator">&gt;&gt;&gt;</span> <span class="name">file_options</span><span class="operator">.</span><span class="name">encoding</span> <span class="operator">=</span> <span class="literal string double">&quot;utf-8&quot;</span>
+<span class="operator">&gt;&gt;&gt;</span> <span class="name">pymacros4py</span><span class="operator">.</span><span class="name">file_options</span><span class="operator">.</span><span class="name">encoding</span> <span class="operator">=</span> <span class="literal string double">&quot;utf-8&quot;</span>
 </pre>
+</div>
+<div class="section" id="using-pymacros4py-together-with-a-code-formatter">
+<h3>Using pymacros4py together with a code formatter</h3>
+<p>If you like to apply a code formatter, e.g., <em>black</em>, on files generated by
+template expansion, <em>pymacros4py</em> also exposes its functionality at a slightly
+lower level. This is showcased in the following example. It uses all the
+functionality provided.</p>
+<p>Just expand a template, do not write to a file:</p>
+<pre class="code python literal-block">
+<span class="operator">&gt;&gt;&gt;</span> <span class="name">template_path</span> <span class="operator">=</span> <span class="literal string single">'tests/data/file_generating_unformatted_code.tpl.py'</span><span class="whitespace">
+</span><span class="operator">&gt;&gt;&gt;</span> <span class="name">expanded</span> <span class="operator">=</span> <span class="name">pp</span><span class="operator">.</span><span class="name">expand_file</span><span class="punctuation">(</span><span class="name">template_path</span><span class="punctuation">)</span>
+</pre>
+<p>Process the results of a macro expansion with an external tool:</p>
+<pre class="code python literal-block">
+<span class="operator">&gt;&gt;&gt;</span> <span class="name">temp_file_path</span> <span class="operator">=</span> <span class="name">pymacros4py</span><span class="operator">.</span><span class="name">write_to_tempfile</span><span class="punctuation">(</span><span class="name">expanded</span><span class="punctuation">)</span><span class="whitespace">
+</span><span class="operator">&gt;&gt;&gt;</span> <span class="name">pymacros4py</span><span class="operator">.</span><span class="name">run_process_with_file</span><span class="punctuation">([</span><span class="literal string double">&quot;black&quot;</span><span class="punctuation">,</span> <span class="name">temp_file_path</span><span class="punctuation">],</span> <span class="name">temp_file_path</span><span class="punctuation">)</span><span class="whitespace">
+</span><span class="operator">&gt;&gt;&gt;</span> <span class="name">formatted</span> <span class="operator">=</span> <span class="name">pymacros4py</span><span class="operator">.</span><span class="name">read_file</span><span class="punctuation">(</span><span class="name">temp_file_path</span><span class="punctuation">,</span> <span class="name">finally_remove</span><span class="operator">=</span><span class="keyword constant">True</span><span class="punctuation">)</span>
+</pre>
+<p>Store the results of the post-processing to a file:</p>
+<pre class="code python literal-block">
+<span class="operator">&gt;&gt;&gt;</span> <span class="name">result_path</span> <span class="operator">=</span> <span class="literal string single">'tests/data/file_generating_unformatted_code.py'</span><span class="whitespace">
+</span><span class="operator">&gt;&gt;&gt;</span> <span class="name">pymacros4py</span><span class="operator">.</span><span class="name">write_file</span><span class="punctuation">(</span><span class="name">result_path</span><span class="punctuation">,</span> <span class="name">formatted</span><span class="punctuation">)</span>
+</pre>
+<p>Compare two texts, e.g., a template and the expanded result, or
+an expanded result and a formatted form of its content, in the
+form used by option <em>diffs_to_result_file</em> of method
+<em>pp.expand_file_to_file</em>:</p>
+<pre class="code python literal-block">
+<span class="operator">&gt;&gt;&gt;</span> <span class="name builtin">print</span><span class="punctuation">(</span><span class="name">pp</span><span class="operator">.</span><span class="name">diff</span><span class="punctuation">(</span><span class="name">expanded</span><span class="punctuation">,</span> <span class="name">formatted</span><span class="punctuation">,</span> <span class="literal string double">&quot;expanded&quot;</span><span class="punctuation">,</span> <span class="literal string double">&quot;formatted&quot;</span><span class="punctuation">))</span><span class="whitespace">
+</span><span class="operator">***</span> <span class="name">expanded</span><span class="whitespace">
+</span><span class="operator">---</span> <span class="name">formatted</span><span class="whitespace">
+</span><span class="operator">***************</span><span class="whitespace">
+</span><span class="operator">***</span> <span class="literal number integer">1</span><span class="punctuation">,</span><span class="literal number integer">3</span> <span class="operator">****</span><span class="whitespace">
+</span><span class="error">!</span> <span class="name builtin">print</span><span class="punctuation">(</span><span class="whitespace">
+</span><span class="error">!</span> <span class="literal string double">&quot;Hello world&quot;</span><span class="whitespace">
+</span><span class="error">!</span> <span class="punctuation">)</span><span class="whitespace">
+</span><span class="operator">---</span> <span class="literal number integer">1</span> <span class="operator">----</span><span class="whitespace">
+</span><span class="error">!</span> <span class="name builtin">print</span><span class="punctuation">(</span><span class="literal string double">&quot;Hello world&quot;</span><span class="punctuation">)</span><span class="whitespace">
+</span><span class="operator">&lt;</span><span class="name">BLANKLINE</span><span class="operator">&gt;</span>
+</pre>
+<p>Notes:</p>
+<ul class="simple">
+<li><em>read_file</em>, <em>expand_file</em>, <em>write_file</em>, and <em>write_to_tempfile</em> all use the
+<em>file_options</em> described above.</li>
+<li><em>run_process_with_file</em> calls <em>subprocess.run</em>. The first argument is used as <em>args</em>
+for this function of the Python standard lib. See there for details. The second
+argument gives the path of the processed file to <em>pymacros4py</em>, so that the
+library can hint to the file in case an exception is raised during the <em>run</em>.</li>
+<li>If <em>run_process_with_file</em> raises an exception, the temporary file is not removed:
+The user might want to examine the content of the file
+the external code formatter got as input, because the reason of the failure could
+be within the processed file.</li>
+</ul>
 </div>
 </div>
 <div class="section" id="templates-and-template-expansion">
@@ -527,6 +582,7 @@ can be written. Further details are described in the following sections.</p>
 <p>One way to mark macro code in a template looks similar to a
 <strong>string starting and ending with two dollar characters</strong>.
 Single or double quotes, or triple single or double quotes can be used.</p>
+<p>Note, that whitespace between the quotes and the dollar characters is not allowed.</p>
 <p><strong>Example:</strong> The following lines each show a macro section with 'v = 0' as
 macro code within the macro section.</p>
 <pre class="code python literal-block">
@@ -538,7 +594,7 @@ macro code within the macro section.</p>
 <p><strong>Start and end of macro code is identified only by the special combination</strong>
 <strong>of quoting and dollar characters</strong>.
 Thus, both the quotes and the dollars can be freely used in macro code
-and in application code, as long as they do not occur together. This makes the
+and in application code, as long as they do not occur directly together. This makes the
 macro recognition quite robust.</p>
 <p><strong>Example:</strong> Some dollar characters and quotes in application code and in macro
 sections, but not combined in the special syntax that starts or ends a macro section</p>
@@ -619,13 +675,12 @@ $$'''</span>
 <p><strong>Example:</strong> Multi-line string with non-indented content</p>
 <pre class="code python literal-block">
 <span class="literal string doc">'''$$
-    if True:  # enforce indentation
-        v1 = &quot;&quot;&quot;
-    First line of string. No indentation. This will be preserved.
-    Second line of string. No indentation. This will be preserved.
-    &quot;&quot;&quot;
-        # We continue the indented suite of the if statement
-        v2 = 0
+    v = &quot;&quot;&quot;
+First line of string. No indentation. This will be preserved.
+Second line of string. No indentation. This will be preserved.
+&quot;&quot;&quot;
+    # Our code continues at the level of the base indentation
+    insert(v)
 $$'''</span>
 </pre>
 </div>
@@ -639,6 +694,11 @@ the macro section spans the whole line, including a trailing line break.</p>
 <pre class="code python literal-block">
 <span class="comment single"># $$ v = 0</span>
 </pre>
+<p>Hint: Macro code in a comment is valid Python syntax even if it occurs within
+signatures in application code. This prevents a Python editor from
+signalling a syntax error in your template, what can be helpful. Quoted macro code
+has the advantage that it can span multiple lines, and that some editors highlight
+it in the template, what can also be useful.</p>
 </div>
 <div class="section" id="arbitrary-python-code-as-macro-code">
 <h3>Arbitrary Python code as macro code</h3>
@@ -788,6 +848,9 @@ the call).</p>
 ignore the call.</p>
 </li>
 </ul>
+<p>If the first part of the path (see <em>pathlib.PurePath.parts</em>) given as <em>template_file</em>
+is <em>$$</em>, this part is removed and the subsequent parts are interpreted relative to
+the directory of the currently expanded template.</p>
 <p><strong>Example for insert_from:</strong></p>
 <p>The following call of <em>insert_from</em>:</p>
 <pre class="code python literal-block">
@@ -810,13 +873,14 @@ ignore the call.</p>
 <p>The output of the <em>include</em> statement is added to the results,
 but the content of the global namespace (here: the value of variable <em>i</em>) is not
 changed.</p>
-<p><strong>Example for import_from:</strong></p>
+<p><strong>Example for import_from, with a path relative to the template:</strong></p>
 <p>The following template:</p>
 <pre class="code python literal-block">
-<span class="comment single"># $$ import_from(&quot;tests/data/file_with_definition_macro.py&quot;)</span><span class="whitespace">
+<span class="comment single"># $$ import_from(&quot;$$/file_with_definition_macro.py&quot;)</span><span class="whitespace">
 </span><span class="comment single"># $$ insert(return_print_n_times(3, &quot;Yep.&quot;))</span>
 </pre>
-<p>with the following content of the file:</p>
+<p>with the following content of the file, that is stored in the same directory as the
+template that contains the above given code:</p>
 <pre class="code python literal-block">
 <span class="literal string doc">'''$$
     def return_print_n_times(n, s):
@@ -1127,11 +1191,13 @@ section <em>Templates and template expansion</em>.</p>
 <span class="operator">&gt;&gt;&gt;</span> <span class="name builtin">print</span><span class="punctuation">(</span><span class="name">pp</span><span class="operator">.</span><span class="name">expand_file_to_file</span><span class="punctuation">(</span><span class="literal string double">&quot;tests/data/diff_templ_and_templ_exp.tpl.py&quot;</span><span class="punctuation">,</span><span class="whitespace">
 </span><span class="operator">...</span>                              <span class="literal string double">&quot;tests/data/doc_templ_and_templ_exp.py&quot;</span><span class="punctuation">,</span><span class="whitespace">
 </span><span class="operator">...</span>                              <span class="name">diffs_to_result_file</span> <span class="operator">=</span> <span class="keyword constant">True</span><span class="punctuation">))</span><span class="whitespace">
-</span><span class="operator">---</span> <span class="name">current</span> <span class="name">content</span><span class="whitespace">
-</span><span class="operator">+++</span> <span class="name">expansion</span> <span class="name">result</span><span class="whitespace">
-</span><span class="operator">&#64;&#64;</span> <span class="operator">-</span><span class="literal number integer">1</span> <span class="operator">+</span><span class="literal number integer">1</span> <span class="operator">&#64;&#64;</span><span class="whitespace">
-</span><span class="operator">-</span><span class="name">x</span> <span class="operator">=</span> <span class="literal number integer">6</span><span class="whitespace">
-</span><span class="operator">+</span><span class="name">x</span> <span class="operator">=</span> <span class="literal number integer">9</span><span class="whitespace">
+</span><span class="operator">***</span> <span class="name">current</span> <span class="name">content</span><span class="whitespace">
+</span><span class="operator">---</span> <span class="name">expansion</span> <span class="name">result</span><span class="whitespace">
+</span><span class="operator">***************</span><span class="whitespace">
+</span><span class="operator">***</span> <span class="literal number integer">1</span> <span class="operator">****</span><span class="whitespace">
+</span><span class="error">!</span> <span class="name">x</span> <span class="operator">=</span> <span class="literal number integer">6</span><span class="whitespace">
+</span><span class="operator">---</span> <span class="literal number integer">1</span> <span class="operator">----</span><span class="whitespace">
+</span><span class="error">!</span> <span class="name">x</span> <span class="operator">=</span> <span class="literal number integer">9</span><span class="whitespace">
 </span><span class="operator">&lt;</span><span class="name">BLANKLINE</span><span class="operator">&gt;</span>
 </pre>
 </div>
@@ -1218,14 +1284,25 @@ the expansion result instead of storing it to a file.</p>
 </div>
 <div class="section" id="changelog">
 <h3>Changelog</h3>
+<p><strong>v0.8.2</strong> (2024-03-12)</p>
+<ul class="simple">
+<li>Method <em>PreProcessor.diff</em> and functions
+<em>read_file, write_file, write_to_tempfile, and run_on_tempfile</em>
+exported / added. They ease applying an external code formatter
+on content that has been generated by macro expansion.</li>
+<li>Methods <em>import_from</em> and <em>insert_from</em> support paths relative to the path of
+the template file, not only relative to the current directory.</li>
+<li>Error messages improved.</li>
+<li>Semantic versioning is used.</li>
+</ul>
 <p><strong>v0.8.1</strong> (2024-02-11)</p>
 <ul class="simple">
-<li>Error messages and format of text differences improved</li>
-<li>Source formatted with black default 2024</li>
+<li>Error messages and format of text differences improved.</li>
+<li>Source formatted with black default 2024.</li>
 </ul>
 <p><strong>v0.8.0</strong> (2024-01-21)</p>
 <ul class="simple">
-<li>First published version</li>
+<li>First published version.</li>
 </ul>
 </div>
 </div>

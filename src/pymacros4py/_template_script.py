@@ -97,6 +97,8 @@ class TemplateScript:
         trace_parsing: bool = False,
         trace_evaluation: bool = False,
     ) -> None:
+        self.file_name = file_name
+
         # Token texts that have already been regarded in the generation of the
         # token expansion code. Used to give the template script access to them.
         token_strings = list[str]()

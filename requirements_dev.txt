@@ -1,4 +1,5 @@
 # -- build and upload --
+setuptools>=61.0
 pip>=22.0.4
 build>=0.7.0
 twine>=3.7.1

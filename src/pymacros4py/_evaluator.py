@@ -2,6 +2,7 @@ from typing import Optional
 import tempfile
 import os
 import sys
+import pathlib
 from dataclasses import dataclass
 
 from ._files import read_file
@@ -214,12 +215,19 @@ def evaluate_template_script(
         (If *globals* is not *None*, and you like to re-use results in cases of
         equivalent content of *globals*, this has to be implemented manually.)
 
-        :param template_file: Template to expand.
+        :param template_file: Template to expand. If the first part of the path
+          (see *pathlib.PurePath.parts*) is '$$', this part is removed and the
+          subsequent parts are interpreted relative to the directory of the
+          currently expanded template.
         :param globals_dict: Like parameter *globals* of the Python function *exec*.
           Note, that in order to use it, a value for key *macro* will be set.
         :param trace_parsing: Print parsing log to stderr.
         :param trace_evaluation: Print evaluation log to stderr.
         """
+        parts = pathlib.PurePath(template_file).parts
+        if parts and parts[0] == "$$":
+            template_dir = pathlib.PurePath(template_script.file_name).parent
+            template_file = str(pathlib.PurePath(template_dir, *parts[1:]))
         template = read_file(template_file)
         template_script_to_insert_from = TemplateScript(
             template_file, template, tokenizer, trace_parsing, trace_evaluation
@@ -236,25 +244,27 @@ def evaluate_template_script(
                 globals_dict,
             )
         else:
-            if template_file in global_evaluation_context.already_inserted_content:
-                result = global_evaluation_context.already_inserted_content[
-                    template_file
-                ]
+            already_inserted = global_evaluation_context.already_inserted_content
+            template_file_resolved = str(
+                pathlib.Path(template_file).resolve(strict=True)
+            )
+            if template_file_resolved in already_inserted:
+                result = already_inserted[template_file_resolved]
             else:
                 result = evaluate_template_script(
                     template_script_to_insert_from,
                     tokenizer,
                     global_evaluation_context,
-                    already_imported_files,
-                    None,
+                    set[str](),  # no imports so far, due to new evaluation context
+                    None,  # empty globals dict -> new evaluation context
                 )
-                global_evaluation_context.already_inserted_content[template_file] = (
-                    result
-                )
+                already_inserted[template_file_resolved] = result
         insert(result)
 
     def import_from(
-        template_file: str, trace_parsing: bool = False, trace_evaluation: bool = False
+        template_file: str,
+        trace_parsing: bool = False,
+        trace_evaluation: bool = False,
     ) -> None:
         """
         Perform a macro expansion of *file* in the scope of the current interpreter.
@@ -268,25 +278,38 @@ def evaluate_template_script(
         When called a second time with an identical argument for *template_file*,
         ignore the call.
 
-        :param template_file: Template to expand.
+        :param template_file: Template to expand. If the first part of the path
+          (see *pathlib.PurePath.parts*) is '$$', this part is removed and the
+          subsequent parts are interpreted relative to the directory of the
+          currently expanded template.
         :param trace_parsing: Print parsing log to stderr.
         :param trace_evaluation: Print evaluation log to stderr.
         """
 
-        if template_file in already_imported_files:
+        parts = pathlib.PurePath(template_file).parts
+        if parts and parts[0] == "$$":
+            template_dir = pathlib.PurePath(template_script.file_name).parent
+            template_file = str(pathlib.PurePath(template_dir, *parts[1:]))
+        template_file_resolved = str(pathlib.Path(template_file).resolve(strict=True))
+        if template_file_resolved in already_imported_files:
             return
-        template = read_file(template_file)
-        template_script_to_import_from = TemplateScript(
-            template_file, template, tokenizer, trace_parsing, trace_evaluation
-        )
-        _ = evaluate_template_script(
-            template_script=template_script_to_import_from,
-            tokenizer=tokenizer,
-            global_evaluation_context=global_evaluation_context,
-            already_imported_files=already_imported_files,
-            globals_dict=globals_dict,
-        )
-        already_imported_files.add(template_file)
+        try:
+            template = read_file(template_file)
+            template_script_to_import_from = TemplateScript(
+                template_file, template, tokenizer, trace_parsing, trace_evaluation
+            )
+            _ = evaluate_template_script(
+                template_script=template_script_to_import_from,
+                tokenizer=tokenizer,
+                global_evaluation_context=global_evaluation_context,
+                already_imported_files=already_imported_files,
+                globals_dict=globals_dict,
+            )
+            already_imported_files.add(template_file_resolved)
+        except Exception as e:
+            raise RuntimeError(
+                f'Exception when importing from file "{template_file}"'
+            ) from e
 
     # Globals dict for the execution of the template script:
     # Make the current object accessible from within the template script code, and
