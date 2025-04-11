@@ -367,75 +367,205 @@ ul.auto-toc {
 <div class="section" id="pymacros4py">
 <h1>pymacros4py</h1>
 <div class="section" id="brief-description">
-<h2>Brief description</h2>
-<p>pymacros4py is a templating system for Python code. It is based on a source-level macro
-preprocessor. Expressions, statements, and functions in the macro domain are also
-written in Python.</p>
+<h2>Brief Description</h2>
+<div class="section" id="what-is-pymacros4py">
+<h3>What is pymacros4py?</h3>
+<p><strong>pymacros4py</strong> is a Python templating system designed as a source-level macro
+preprocessor. It allows you to create and embed macros (written in Python) that
+manipulate, duplicate, or generate Python code.
+The system helps ensure that the generated code meets Python's indentation
+requirements.</p>
 </div>
-<div class="section" id="why-and-when">
-<h2>Why and when?</h2>
-<p>Typical Python software is developed without using macros. And that for good reasons:
-Macros are not necessary. And they have serious disadvantages.</p>
-<p>But in some cases, you might want to write code that duplicates, manipulates, or
-generates code and inserts it into other code, while adhering to proper
-indentation. Then, using a template system might be better than starting from scratch.</p>
-<p>Here are some examples:</p>
+<div class="section" id="why-use-pymacros4py">
+<h3>Why Use pymacros4py?</h3>
+<p>While macros are mostly unnecessary in Python due to its rich syntax and dynamic
+capabilities, there are specific scenarios where using a macro-based templating
+system can be very effective. Examples include:</p>
 <ul class="simple">
-<li>You maintain a common code base for two different platforms, e.g., CPython and
-Cython. There are places in your code where you want to differentiate
-between the platforms already on the source level, e.g., in order to hide code
-for one platform from users of the other platform.</li>
-<li>There is this function that is called in performance critical code, and you
-want to inline it - but without spreading its implementation all over the project, and
-without larger modifications of your project, e.g., like switching to PyPy.</li>
-<li>Some parts of signatures or implementations in your project are identical and you
-want to keep them strictly consistent.</li>
-<li>You need to automatically generate parts of the content of some
-configuration file, and you want to make this process more explicit than using some
-generator script hidden somewhere in your project.</li>
+<li><strong>Cross-platform requirements:</strong> Maintaining code for multiple platforms
+(e.g., CPython and Cython) where certain sections of code need to be specific
+to each platform.</li>
+<li><strong>Performance-critical code:</strong> Inlining functions in performance-sensitive
+areas without duplicating their implementation all over the project or making
+significant changes like moving to PyPy.</li>
+<li><strong>Code consistency:</strong> Simplifying the management of repetitive code structures
+(e.g., function signatures or identical logic) to ensure consistency.</li>
+<li><strong>Configuration automation:</strong> Explicitly generating portions of configuration
+files instead of relying on hidden generator scripts.</li>
 </ul>
-<p>You need a templating system for Python code? Welcome to pymacros4py!</p>
-<p>(Note: pymacros4py expands macros at the source-level. For extending
+<p>If you're seeking for a solution to address such challenges,
+<strong>pymacros4py</strong> could be helpful for you.</p>
+<p>(Note: <strong>pymacros4py</strong> expands macros at the source level. For extending
 the language Python itself, in order to get a programming language with
 additional capabilities, macro expansion
 on the level of the abstract syntax tree, in the build phase of the
 interpretation process, is better suited. See, e.g., the language lab
 <a class="reference external" href="https://pypi.org/project/mcpyrate/">mcpyrate</a>.)</p>
 </div>
-<div class="section" id="properties">
-<h2>Properties</h2>
-<p><em>pymacros4py</em> is a templating system with the following characteristics:</p>
+<div class="section" id="key-features">
+<h3>Key Features</h3>
 <ul class="simple">
-<li>It is <strong>made for templates for Python files</strong>, e.g., macro-generated code
-respects indentation.</li>
-<li><strong>Statements, functions, and expressions of the macro domain</strong>
-<strong>are defined as Python code</strong> -
-You don't need to learn a special macro language; you just need to know how to
-embedd Python macro code in Python code.
-And you can directly use all the capabilities of Python.</li>
-<li>The preprocessor works <strong>on the source level</strong> - You see the resulting code before
-any bytecode generation / compilation / interpretation is done. And no dependency on
-external code, libraries or executables is introduced in these execution phases.</li>
-<li>Macro variables and functions
-<strong>can be defined directly in the files where they are used</strong>, or
-in separate files.</li>
-<li>Macro expansion can be <strong>multi-level</strong>, e.g., when macro code includes templates
-that contain macro code. Expansion results are cached in order to avoid unnecessary
-computations.</li>
-<li><strong>No replacements outside explicitly marked macro sections take place</strong> -
-This avoids the problem that a macro definition may automatically apply to future
-code added by other maintainers who do not know about the macro, with unexpected
-results.</li>
+<li><strong>Designed specifically for Python file templates</strong>: Macro-generated code
+adheres to Python's indentation rules seamlessly.</li>
+<li><strong>Macro domain elements such as statements, functions, and expressions are</strong>
+<strong>defined directly in Python code</strong>: No need to learn a specialized macro
+language - you simply embed Python macro code within Python code. This approach
+allows you to leverage all the functionalities Python offers.</li>
+<li><strong>Operates at the source level</strong>: Using a preprocessor provides visibility
+into the generated code prior to bytecode generation, compilation, or
+interpretation. Additionally, it avoids introducing dependencies on external
+code, libraries, or executables during these phases.</li>
+<li><strong>Macro variables and functions</strong>: These can be
+declared <strong>either directly in the files they are utilized in</strong> or
+<strong>stored in separate files</strong> for better organization.</li>
+<li><strong>Supports multi-level macro expansion</strong>: For example, macro code can include
+templates containing additional macro code. Expansion results are cached to
+eliminate redundant computations and boost efficiency.</li>
+<li><strong>Strictly limits replacements to explicitly marked macro sections</strong>:
+This prevents unintended consequences where a macro definition could
+inadvertently apply to future code additions by others, ensuring predictable
+and manageable outcomes.</li>
 </ul>
-<p><em>pymacros4py</em> is implemented as <strong>pure Python code, with a really tiny code base</strong>.
+<p><em>pymacros4py</em> is implemented as <strong>pure Python code, with a small code base</strong>.
 It could be an acceptable pre-build dependency for your project, even if you aim at
-avoiding dependencies. And if it is not acceptable, just copy its code directly into
-your project.</p>
+avoiding dependencies. And if no dependency is acceptable, just copy its code
+directly into your project.</p>
 <p>The code of <em>pymacros4py</em> is tested with 100% code coverage.
-All examples in this README, except for a single line (excluded for
-technical reasons), are covered by tests.</p>
-<p>So far, semantic versioning is not used. There is already some practical experience
-with the library, but not enough to assess the stability of the API.</p>
+Additionally, every example in this README - except for a single line
+(excluded from the tests for technical constraints) - is covered by tests.</p>
+<p>At present, semantic versioning is not applied. The practical experience
+available with the library so far is not sufficient to assess the stability
+of the API.</p>
+</div>
+<div class="section" id="first-examples">
+<h3>First Examples</h3>
+<p>The following simple examples demonstrate how templating can be used.</p>
+<p><strong>Example: Signatures, docstrings and code kept consistent by templating</strong></p>
+<p>The following template combines macro code with application code.
+The macro code is the Python code enclosed between the <strong>$$</strong>
+symbols within the quotes.</p>
+<pre class="code python literal-block">
+<span class="literal string doc">'''$$
+    def signature_fragment():
+        insert(f&quot;increment: bool = True\n&quot;)
+
+    def code_fragment(v):
+        insert(f'''</span>\
+<span class="literal string doc">&quot;&quot;&quot;If *increment* is True, return one more than *{v}*,
+and otherwise, one less than *{v}*.
+&quot;&quot;&quot;</span><span class="whitespace">
+</span><span class="keyword">return</span> <span class="punctuation">{</span><span class="name">v</span> <span class="operator">+</span> <span class="literal number integer">1</span><span class="punctuation">}</span> <span class="keyword">if</span> <span class="name">increment</span> <span class="keyword">else</span> <span class="punctuation">{</span><span class="name">v</span> <span class="operator">-</span> <span class="literal number integer">1</span><span class="punctuation">}</span><span class="whitespace">
+</span><span class="literal string doc">''')
+
+$$'''</span><span class="whitespace">
+</span><span class="keyword">def</span> <span class="name function">increment_or_decrement_1</span><span class="punctuation">(</span><span class="whitespace">
+</span>    <span class="comment single"># $$ signature_fragment()</span><span class="whitespace">
+</span><span class="punctuation">)</span> <span class="operator">-&gt;</span> <span class="name builtin">int</span><span class="punctuation">:</span><span class="whitespace">
+</span>    <span class="comment single"># $$ code_fragment(1)</span><span class="whitespace">
+
+</span><span class="keyword">def</span> <span class="name function">increment_or_decrement_2</span><span class="punctuation">(</span><span class="whitespace">
+</span>    <span class="comment single"># $$ signature_fragment()</span><span class="whitespace">
+</span><span class="punctuation">)</span> <span class="operator">-&gt;</span> <span class="name builtin">int</span><span class="punctuation">:</span><span class="whitespace">
+</span>    <span class="comment single"># $$ code_fragment(2)</span>
+</pre>
+<p>This template produces the following result:</p>
+<pre class="code python literal-block">
+<span class="keyword">def</span> <span class="name function">increment_or_decrement_1</span><span class="punctuation">(</span><span class="whitespace">
+</span>    <span class="name">increment</span><span class="punctuation">:</span> <span class="name builtin">bool</span> <span class="operator">=</span> <span class="keyword constant">True</span><span class="whitespace">
+</span><span class="punctuation">)</span> <span class="operator">-&gt;</span> <span class="name builtin">int</span><span class="punctuation">:</span><span class="whitespace">
+    </span><span class="literal string doc">&quot;&quot;&quot;If *increment* is True, return one more than *1*,
+    and otherwise, one less than *1*.
+    &quot;&quot;&quot;</span><span class="whitespace">
+</span>    <span class="keyword">return</span> <span class="literal number integer">2</span> <span class="keyword">if</span> <span class="name">increment</span> <span class="keyword">else</span> <span class="literal number integer">0</span><span class="whitespace">
+
+</span><span class="keyword">def</span> <span class="name function">increment_or_decrement_2</span><span class="punctuation">(</span><span class="whitespace">
+</span>    <span class="name">increment</span><span class="punctuation">:</span> <span class="name builtin">bool</span> <span class="operator">=</span> <span class="keyword constant">True</span><span class="whitespace">
+</span><span class="punctuation">)</span> <span class="operator">-&gt;</span> <span class="name builtin">int</span><span class="punctuation">:</span><span class="whitespace">
+    </span><span class="literal string doc">&quot;&quot;&quot;If *increment* is True, return one more than *2*,
+    and otherwise, one less than *2*.
+    &quot;&quot;&quot;</span><span class="whitespace">
+</span>    <span class="keyword">return</span> <span class="literal number integer">3</span> <span class="keyword">if</span> <span class="name">increment</span> <span class="keyword">else</span> <span class="literal number integer">1</span>
+</pre>
+<p>Like this, macro code with its definitions and usages can simply be written in Python.</p>
+<p>Additionally, it's possible to use fragments of the template as body of function
+definitions, even at the point where these functions are first used.
+For instance, the template below produces the same result as the one above:</p>
+<pre class="code python literal-block">
+<span class="keyword">def</span> <span class="name function">increment_or_decrement_1</span><span class="punctuation">(</span><span class="whitespace">
+</span>    <span class="comment single"># $$ def signature_fragment():</span><span class="whitespace">
+</span>    <span class="name">increment</span><span class="punctuation">:</span> <span class="name builtin">bool</span> <span class="operator">=</span> <span class="keyword constant">True</span><span class="whitespace">
+</span>    <span class="comment single"># $$ :end</span><span class="whitespace">
+</span>    <span class="comment single"># $$ signature_fragment()</span><span class="whitespace">
+</span><span class="punctuation">)</span> <span class="operator">-&gt;</span> <span class="name builtin">int</span><span class="punctuation">:</span><span class="whitespace">
+</span>    <span class="comment single"># $$ def code_fragment(v):</span><span class="whitespace">
+    </span><span class="literal string doc">&quot;&quot;&quot;If *increment* is True, return one more than *'$$ insert(v) $$'*,
+    and otherwise, one less than *'$$ insert(v) $$'*.
+    &quot;&quot;&quot;</span><span class="whitespace">
+</span>    <span class="keyword">return</span> <span class="literal string single">'$$ insert(v+1) $$'</span> <span class="keyword">if</span> <span class="name">increment</span> <span class="keyword">else</span> <span class="literal string single">'$$ insert(v-1) $$'</span><span class="whitespace">
+</span>    <span class="comment single"># $$ :end</span><span class="whitespace">
+</span>    <span class="comment single"># $$ code_fragment(1)</span><span class="whitespace">
+
+</span><span class="keyword">def</span> <span class="name function">increment_or_decrement_2</span><span class="punctuation">(</span><span class="whitespace">
+</span>    <span class="comment single"># $$ signature_fragment()</span><span class="whitespace">
+</span><span class="punctuation">)</span> <span class="operator">-&gt;</span> <span class="name builtin">int</span><span class="punctuation">:</span><span class="whitespace">
+</span>    <span class="comment single"># $$ code_fragment(2)</span>
+</pre>
+<p><strong>Example: Current year inserted into license file</strong></p>
+<p>While many features of <em>pymacros4py</em> are designed specifically for templating
+Python files - such as proper handling of indentation in both macros and
+application code - templates can also be used for other text files within your
+project.</p>
+<p>For example, the following template demonstrates how to automatically insert
+the current year into a license file:</p>
+<pre class="literal-block">
+'''$$
+import time
+def current_year():
+    now = time.gmtime()
+    return time.strftime('%Y', now)
+$$'''
+MIT License
+Copyright(c) 2023 - '$$ insert(current_year()) $$' The author
+...
+</pre>
+<p>This template generates:</p>
+<pre class="literal-block">
+MIT License
+Copyright(c) 2023 - 2025 The author
+...
+</pre>
+<p><strong>Example: Pre-computation of expressions</strong></p>
+<p>The following template defines an expression as a macro function and executes
+it during the macro expansion, in the sense of a pre-computation.</p>
+<pre class="code python literal-block">
+<span class="literal string doc">'''$$
+   def incremented_by_1(i):
+       insert(i+1)
+$$'''</span><span class="whitespace">
+
+</span><span class="name builtin">print</span><span class="punctuation">(</span><span class="literal string single">'$$ incremented_by_1(5) $$'</span><span class="punctuation">)</span><span class="whitespace">
+</span><span class="name builtin">print</span><span class="punctuation">(</span><span class="literal string single">'$$ incremented_by_1(6) $$'</span><span class="punctuation">)</span>
+</pre>
+<p>This template generates:</p>
+<pre class="code python literal-block">
+<span class="name builtin">print</span><span class="punctuation">(</span><span class="literal number integer">6</span><span class="punctuation">)</span><span class="whitespace">
+</span><span class="name builtin">print</span><span class="punctuation">(</span><span class="literal number integer">7</span><span class="punctuation">)</span>
+</pre>
+<p><strong>Example: In-lining of expressions and function statements</strong></p>
+<p>The following template defines an expression as a macro function and inserts
+it during the macro expansion, in the sense of an in-lining.</p>
+<pre class="code python literal-block">
+<span class="literal string doc">'''$$
+   def increment_by_1(i):
+       insert(f'({i} + 1)')
+$$'''</span><span class="whitespace">
+
+</span><span class="name builtin">print</span><span class="punctuation">(</span><span class="literal string single">'$$ increment_by_1(&quot;3&quot;) $$'</span> <span class="operator">*</span> <span class="literal number integer">2</span><span class="punctuation">)</span>
+</pre>
+<pre class="code python literal-block">
+<span class="name builtin">print</span><span class="punctuation">((</span><span class="literal number integer">3</span> <span class="operator">+</span> <span class="literal number integer">1</span><span class="punctuation">)</span> <span class="operator">*</span> <span class="literal number integer">2</span><span class="punctuation">)</span>
+</pre>
+</div>
 </div>
 <div class="section" id="usage">
 <h2>Usage</h2>
@@ -478,12 +608,13 @@ as attributes of the global object <em>file_options</em>:</p>
 <span class="operator">&gt;&gt;&gt;</span> <span class="name">pymacros4py</span><span class="operator">.</span><span class="name">file_options</span><span class="operator">.</span><span class="name">encoding</span> <span class="operator">=</span> <span class="literal string double">&quot;utf-8&quot;</span>
 </pre>
 </div>
-<div class="section" id="using-pymacros4py-together-with-a-code-formatter">
-<h3>Using pymacros4py together with a code formatter</h3>
-<p>If you like to apply a code formatter, e.g., <em>black</em>, on files generated by
-template expansion, <em>pymacros4py</em> also exposes its functionality at a slightly
-lower level. This is showcased in the following example. It uses all the
-functionality provided.</p>
+<div class="section" id="using-pymacros4py-with-a-code-formatter">
+<h3>Using pymacros4py With a Code Formatter</h3>
+<p>If you wish to utilize a code formatter like Black on files generated
+through template expansion, <em>pymacros4py</em> offers its functionality at a
+slightly lower level of abstraction to support such implementations.
+This is showcased in the following example. It uses all the functionality
+provided.</p>
 <p>Just expand a template, do not write to a file:</p>
 <pre class="code python literal-block">
 <span class="operator">&gt;&gt;&gt;</span> <span class="name">template_path</span> <span class="operator">=</span> <span class="literal string single">'tests/data/file_generating_unformatted_code.tpl.py'</span><span class="whitespace">
@@ -533,7 +664,7 @@ be within the processed file.</li>
 </div>
 </div>
 <div class="section" id="templates-and-template-expansion">
-<h2>Templates and template expansion</h2>
+<h2>Templates and Template Expansion</h2>
 <p>A <em>template</em> consists of macro sections and text sections. A single line
 of a template can already contain several such sections.</p>
 <ul class="simple">
@@ -578,7 +709,7 @@ be mixed like this, and the macro code extends and manipulates the application c
 <p>This explanation and example already gives a good impression of how templates
 can be written. Further details are described in the following sections.</p>
 <div class="section" id="quoted-macro-code-in-templates">
-<h3>Quoted macro code in templates</h3>
+<h3>Quoted Macro Code in Templates</h3>
 <p>One way to mark macro code in a template looks similar to a
 <strong>string starting and ending with two dollar characters</strong>.
 Single or double quotes, or triple single or double quotes can be used.</p>
@@ -632,11 +763,11 @@ $$'''</span>
 </pre>
 </div>
 <div class="section" id="indentation-in-macro-code">
-<h3>Indentation in macro code</h3>
+<h3>Indentation in Macro Code</h3>
 <p>Macro code in a macro section can be indented to an arbitrary local level, independently
 of other macro sections and surrounding application code. Locally, indentation needs
 to follow Python syntax. Globally, <em>pymacros4py</em> will establish a valid indentation when
-combining code of several macro sections, and code generated by <em>mymacros4py</em> itself.</p>
+combining code of several macro sections, and code generated by <em>pymacros4py</em> itself.</p>
 <p><strong>The first (non-whitespace) character of the macro code</strong> in a macro section
 <strong>defines the base indentation</strong> of the code. Subsequent lines of the macro code need to
 be indented accordingly: equally indented (by literally the same characters, but
@@ -684,8 +815,8 @@ Second line of string. No indentation. This will be preserved.
 $$'''</span>
 </pre>
 </div>
-<div class="section" id="macro-code-in-a-comment">
-<h3>Macro code in a comment</h3>
+<div class="section" id="macro-code-within-a-comment">
+<h3>Macro Code within a Comment</h3>
 <p>A second option to mark macro code in a template has the <strong>form of a comment,</strong>
 <strong>starting with a hash character</strong>, optionally
 followed by spaces or tabs, <strong>and two dollar characters</strong>. The macro code ends with
@@ -701,7 +832,7 @@ has the advantage that it can span multiple lines, and that some editors highlig
 it in the template, what can also be useful.</p>
 </div>
 <div class="section" id="arbitrary-python-code-as-macro-code">
-<h3>Arbitrary Python code as macro code</h3>
+<h3>Arbitrary Python Code as Macro Code</h3>
 <p><strong>Macro code is regular Python code</strong>. A call to the predefined
 <strong>function</strong>
 <em>insert</em>
@@ -742,7 +873,7 @@ it in the template, what can also be useful.</p>
 </pre>
 </div>
 <div class="section" id="indentation-of-macro-results">
-<h3>Indentation of macro results</h3>
+<h3>Indentation of Macro Results</h3>
 <p><strong>The results of the expansion of a macro section</strong>,
 e.g., the output of calls of function <em>insert</em>, <strong>are indented relative to the</strong>
 <strong>indentation of the first non-whitespace character of the macro section</strong> (i.e.,
@@ -822,7 +953,7 @@ preserved.</p>
 </div>
 </div>
 <div class="section" id="including-and-importing-files">
-<h2>Including and importing files</h2>
+<h2>Including and Importing Files</h2>
 <p>Macro code can insert expansion results or import attributes, e.g.,
 function definitions, from other template files. pymacros4py offers the following
 functions for this:</p>
@@ -898,8 +1029,8 @@ $$'''</span><span class="whitespace">
 <p>The content of the global namespace is extended by function <em>return_print_n_times</em>,
 but the output of the imported template is ignored.</p>
 </div>
-<div class="section" id="macro-statement-suites-spanning-multiple-sections">
-<h2>Macro statement suites spanning multiple sections</h2>
+<div class="section" id="macro-statement-suites-across-multiple-sections">
+<h2>Macro Statement Suites Across Multiple Sections</h2>
 <p>If the code in a macro section ends within a <em>suite</em> of a Python <em>compound statement</em>
 (see <a class="reference external" href="https://docs.python.org/3/reference/compound_stmts.html">https://docs.python.org/3/reference/compound_stmts.html</a>)
 e.g., an indented block of statements after statements like <em>if</em>, <em>for</em>, or <em>def</em>,
@@ -1049,7 +1180,7 @@ code, but uses the unindented code as-is.</li>
 </pre>
 </div>
 <div class="section" id="def-statement-suites-spanning-multiple-sections">
-<h2>def-statement-suites spanning multiple sections</h2>
+<h2>Def-Statement Suites Spanning Multiple Sections</h2>
 <p>If the suite of a <em>def</em>-statement spans multiple sections, indentation of
 generated results of the macro expansion is special-cased as follows:</p>
 <ul class="simple">
@@ -1089,7 +1220,7 @@ suite of the <em>def</em> statement. Like that, valid indentation is established
 <div class="section" id="debugging">
 <h2>Debugging</h2>
 <div class="section" id="error-messages">
-<h3>Error messages</h3>
+<h3>Error Messages</h3>
 <p>In case something goes wrong, <em>pymacros4py</em> tries to give helpful error messages.</p>
 <p><strong>Example: Wrong indentation within macro code</strong></p>
 <pre class="code python literal-block">
@@ -1173,7 +1304,7 @@ cannot handle this version-specific deviation of the results. So, above, we only
 check that the expected exception occurs.)</p>
 </div>
 <div class="section" id="comparing-results">
-<h3>Comparing results</h3>
+<h3>Comparing Results</h3>
 <p>Method <em>expand_file_to_file</em> offers an option <em>diffs_to_result_file</em> that returns
 the differences between the results of the macro expansion and the current content
 of the result file. If there are no differences, the empty string is returned.</p>
@@ -1202,7 +1333,7 @@ section <em>Templates and template expansion</em>.</p>
 </pre>
 </div>
 <div class="section" id="viewing-the-template-script">
-<h3>Viewing the template script</h3>
+<h3>Viewing the Template Script</h3>
 <p>When an exception is raised during the execution of a generated template script,
 e.g., if there is an error in your Python macro code, the
 script will be automatically stored (as temporary file, with the platform specific
@@ -1284,6 +1415,11 @@ the expansion result instead of storing it to a file.</p>
 </div>
 <div class="section" id="changelog">
 <h3>Changelog</h3>
+<p><strong>v0.8.3</strong> (2025-04-11)</p>
+<ul class="simple">
+<li>Code adapted to new, stricter tests of <em>flake8</em>.</li>
+<li>README.rst extended by chapter <em>first examples</em>.</li>
+</ul>
 <p><strong>v0.8.2</strong> (2024-03-12)</p>
 <ul class="simple">
 <li>Method <em>PreProcessor.diff</em> and functions

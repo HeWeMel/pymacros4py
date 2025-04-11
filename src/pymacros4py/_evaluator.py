@@ -99,7 +99,7 @@ def evaluate_template_script(
         Store the information, that subsequent *insert* calls do not stem
         from the current macro anymore.
         """
-        nonlocal macro, output
+        nonlocal macro
 
         if macro is None:  # pragma: no cover
             raise RuntimeError(
@@ -170,7 +170,6 @@ def evaluate_template_script(
         except for the first line produced by an embedded macro.
         Insert result to the result of the template expansion.
         """
-        nonlocal macro, output
         lines_str = "".join((str(a) for a in vargs))
 
         if lines_str == "":

@@ -36,7 +36,9 @@ class ReadmeExamplesTest(unittest.TestCase):
                 if result_file_path.exists():
                     result = pp.expand_file(str(template_path))
                     prev_result = pymacros4py._files.read_file(str(result_file_path))
-                    self.assertMultiLineEqual(result, prev_result)
+                    self.assertMultiLineEqual(
+                        result, prev_result, "In " + str(template_path)
+                    )
                 else:
                     pp.expand_file_to_file(str(template_path), str(result_file_path))
 

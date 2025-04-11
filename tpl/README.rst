@@ -31,45 +31,44 @@
 pymacros4py
 ===========
 
-Brief description
+Brief Description
 -----------------
 
-pymacros4py is a templating system for Python code. It is based on a source-level macro
-preprocessor. Expressions, statements, and functions in the macro domain are also
-written in Python.
+What is pymacros4py?
+....................
+
+**pymacros4py** is a Python templating system designed as a source-level macro
+preprocessor. It allows you to create and embed macros (written in Python) that
+manipulate, duplicate, or generate Python code.
+The system helps ensure that the generated code meets Python's indentation
+requirements.
 
 
-Why and when?
--------------
+Why Use pymacros4py?
+....................
 
-Typical Python software is developed without using macros. And that for good reasons:
-Macros are not necessary. And they have serious disadvantages.
+While macros are mostly unnecessary in Python due to its rich syntax and dynamic
+capabilities, there are specific scenarios where using a macro-based templating
+system can be very effective. Examples include:
 
-But in some cases, you might want to write code that duplicates, manipulates, or
-generates code and inserts it into other code, while adhering to proper
-indentation. Then, using a template system might be better than starting from scratch.
+- **Cross-platform requirements:** Maintaining code for multiple platforms
+  (e.g., CPython and Cython) where certain sections of code need to be specific
+  to each platform.
 
-Here are some examples:
+- **Performance-critical code:** Inlining functions in performance-sensitive
+  areas without duplicating their implementation all over the project or making
+  significant changes like moving to PyPy.
 
-- You maintain a common code base for two different platforms, e.g., CPython and
-  Cython. There are places in your code where you want to differentiate
-  between the platforms already on the source level, e.g., in order to hide code
-  for one platform from users of the other platform.
+- **Code consistency:** Simplifying the management of repetitive code structures
+  (e.g., function signatures or identical logic) to ensure consistency.
 
-- There is this function that is called in performance critical code, and you
-  want to inline it - but without spreading its implementation all over the project, and
-  without larger modifications of your project, e.g., like switching to PyPy.
+- **Configuration automation:** Explicitly generating portions of configuration
+  files instead of relying on hidden generator scripts.
 
-- Some parts of signatures or implementations in your project are identical and you
-  want to keep them strictly consistent.
+If you're seeking for a solution to address such challenges,
+**pymacros4py** could be helpful for you.
 
-- You need to automatically generate parts of the content of some
-  configuration file, and you want to make this process more explicit than using some
-  generator script hidden somewhere in your project.
-
-You need a templating system for Python code? Welcome to pymacros4py!
-
-(Note: pymacros4py expands macros at the source-level. For extending
+(Note: **pymacros4py** expands macros at the source level. For extending
 the language Python itself, in order to get a programming language with
 additional capabilities, macro expansion
 on the level of the abstract syntax tree, in the build phase of the
@@ -77,53 +76,132 @@ interpretation process, is better suited. See, e.g., the language lab
 `mcpyrate <https://pypi.org/project/mcpyrate/>`_.)
 
 
-Properties
-----------
+Key Features
+.............
 
-*pymacros4py* is a templating system with the following characteristics:
+- **Designed specifically for Python file templates**: Macro-generated code
+  adheres to Python's indentation rules seamlessly.
 
-- It is **made for templates for Python files**, e.g., macro-generated code
-  respects indentation.
+- **Macro domain elements such as statements, functions, and expressions are**
+  **defined directly in Python code**: No need to learn a specialized macro
+  language - you simply embed Python macro code within Python code. This approach
+  allows you to leverage all the functionalities Python offers.
 
-- **Statements, functions, and expressions of the macro domain**
-  **are defined as Python code** -
-  You don't need to learn a special macro language; you just need to know how to
-  embedd Python macro code in Python code.
-  And you can directly use all the capabilities of Python.
+- **Operates at the source level**: Using a preprocessor provides visibility
+  into the generated code prior to bytecode generation, compilation, or
+  interpretation. Additionally, it avoids introducing dependencies on external
+  code, libraries, or executables during these phases.
 
-- The preprocessor works **on the source level** - You see the resulting code before
-  any bytecode generation / compilation / interpretation is done. And no dependency on
-  external code, libraries or executables is introduced in these execution phases.
+- **Macro variables and functions**: These can be
+  declared **either directly in the files they are utilized in** or
+  **stored in separate files** for better organization.
 
-- Macro variables and functions
-  **can be defined directly in the files where they are used**, or
-  in separate files.
+- **Supports multi-level macro expansion**: For example, macro code can include
+  templates containing additional macro code. Expansion results are cached to
+  eliminate redundant computations and boost efficiency.
 
-- Macro expansion can be **multi-level**, e.g., when macro code includes templates 
-  that contain macro code. Expansion results are cached in order to avoid unnecessary
-  computations.
+- **Strictly limits replacements to explicitly marked macro sections**:
+  This prevents unintended consequences where a macro definition could
+  inadvertently apply to future code additions by others, ensuring predictable
+  and manageable outcomes.
 
-- **No replacements outside explicitly marked macro sections take place** -
-  This avoids the problem that a macro definition may automatically apply to future
-  code added by other maintainers who do not know about the macro, with unexpected
-  results.
-
-*pymacros4py* is implemented as **pure Python code, with a really tiny code base**.
+*pymacros4py* is implemented as **pure Python code, with a small code base**.
 It could be an acceptable pre-build dependency for your project, even if you aim at
-avoiding dependencies. And if it is not acceptable, just copy its code directly into
-your project.
+avoiding dependencies. And if no dependency is acceptable, just copy its code
+directly into your project.
 
 The code of *pymacros4py* is tested with 100% code coverage.
-All examples in this README, except for a single line (excluded for
-technical reasons), are covered by tests.
+Additionally, every example in this README - except for a single line
+(excluded from the tests for technical constraints) - is covered by tests.
 
-So far, semantic versioning is not used. There is already some practical experience
-with the library, but not enough to assess the stability of the API.
+At present, semantic versioning is not applied. The practical experience
+available with the library so far is not sufficient to assess the stability
+of the API.
+
+
+First Examples
+..............
+
+The following simple examples demonstrate how templating can be used.
+
+**Example: Signatures, docstrings and code kept consistent by templating**
+
+The following template combines macro code with application code.
+The macro code is the Python code enclosed between the **$$**
+symbols within the quotes.
+
+.. code-block:: python
+
+    # $$ insert_content("tests/data/doc_example_consistency_explicit.tpl.py")
+
+This template produces the following result:
+
+.. code-block:: python
+
+    # $$ insert_content("tests/data/doc_example_consistency_explicit.py")
+
+Like this, macro code with its definitions and usages can simply be written in Python.
+
+Additionally, it's possible to use fragments of the template as body of function
+definitions, even at the point where these functions are first used.
+For instance, the template below produces the same result as the one above:
+
+.. code-block:: python
+
+    # $$ insert_content("tests/data/doc_example_consistency_implicit.tpl.py")
+
+
+**Example: Current year inserted into license file**
+
+While many features of *pymacros4py* are designed specifically for templating
+Python files - such as proper handling of indentation in both macros and
+application code - templates can also be used for other text files within your
+project.
+
+For example, the following template demonstrates how to automatically insert
+the current year into a license file:
+
+::
+
+    # $$ insert_content("tests/data/doc_example_license.tpl.py")
+
+This template generates:
+
+::
+
+    # $$ insert_content("tests/data/doc_example_license.py")
+
+**Example: Pre-computation of expressions**
+
+The following template defines an expression as a macro function and executes
+it during the macro expansion, in the sense of a pre-computation.
+
+.. code-block:: python
+
+    # $$ insert_content("tests/data/doc_example_precomputation.tpl.py")
+
+This template generates:
+
+.. code-block:: python
+
+    # $$ insert_content("tests/data/doc_example_precomputation.py")
+
+**Example: In-lining of expressions and function statements**
+
+The following template defines an expression as a macro function and inserts
+it during the macro expansion, in the sense of an in-lining.
+
+.. code-block:: python
+
+    # $$ insert_content("tests/data/doc_example_inlining.tpl.py")
+
+.. code-block:: python
+
+    # $$ insert_content("tests/data/doc_example_inlining.py")
 
 
 Usage
 -----
-
 
 Installation
 ............
@@ -177,13 +255,14 @@ as attributes of the global object *file_options*:
     >>> pymacros4py.file_options.encoding = "utf-8"
 
 
-Using pymacros4py together with a code formatter
-................................................
+Using pymacros4py With a Code Formatter
+.......................................
 
-If you like to apply a code formatter, e.g., *black*, on files generated by
-template expansion, *pymacros4py* also exposes its functionality at a slightly
-lower level. This is showcased in the following example. It uses all the
-functionality provided.
+If you wish to utilize a code formatter like Black on files generated
+through template expansion, *pymacros4py* offers its functionality at a
+slightly lower level of abstraction to support such implementations.
+This is showcased in the following example. It uses all the functionality
+provided.
 
 Just expand a template, do not write to a file:
 
@@ -240,7 +319,7 @@ Notes:
   be within the processed file.
 
 
-Templates and template expansion
+Templates and Template Expansion
 --------------------------------
 
 A *template* consists of macro sections and text sections. A single line
@@ -294,7 +373,7 @@ This explanation and example already gives a good impression of how templates
 can be written. Further details are described in the following sections.
 
 
-Quoted macro code in templates
+Quoted Macro Code in Templates
 ..............................
 
 One way to mark macro code in a template looks similar to a
@@ -355,13 +434,13 @@ line breaks.
     # $$ insert_content("tests/data/doc_whitespace_around_macro_code.tpl.py")
 
 
-Indentation in macro code
+Indentation in Macro Code
 .........................
 
 Macro code in a macro section can be indented to an arbitrary local level, independently
 of other macro sections and surrounding application code. Locally, indentation needs
 to follow Python syntax. Globally, *pymacros4py* will establish a valid indentation when
-combining code of several macro sections, and code generated by *mymacros4py* itself. 
+combining code of several macro sections, and code generated by *pymacros4py* itself.
 
 **The first (non-whitespace) character of the macro code** in a macro section
 **defines the base indentation** of the code. Subsequent lines of the macro code need to
@@ -404,8 +483,8 @@ The third line is locally indented, relative to this base indentation.
     # $$ insert_content("tests/data/doc_code_multiline_indentation.tpl.py")
 
 
-Macro code in a comment
-.......................
+Macro Code within a Comment
+...........................
 
 A second option to mark macro code in a template has the **form of a comment,**
 **starting with a hash character**, optionally
@@ -424,7 +503,7 @@ has the advantage that it can span multiple lines, and that some editors highlig
 it in the template, what can also be useful.
 
 
-Arbitrary Python code as macro code
+Arbitrary Python Code as Macro Code
 ...................................
 
 **Macro code is regular Python code**. A call to the predefined
@@ -461,7 +540,7 @@ It evaluates to:
     # $$ insert_content("tests/data/doc_inserting_computation_result.py")
 
 
-Indentation of macro results
+Indentation of Macro Results
 ............................
 
 **The results of the expansion of a macro section**,
@@ -537,7 +616,7 @@ the zero indentation of the lines of the string literal is detected and thus
 preserved.
 
 
-Including and importing files
+Including and Importing Files
 -----------------------------
 
 Macro code can insert expansion results or import attributes, e.g.,
@@ -623,8 +702,8 @@ The content of the global namespace is extended by function *return_print_n_time
 but the output of the imported template is ignored.
 
 
-Macro statement suites spanning multiple sections
--------------------------------------------------
+Macro Statement Suites Across Multiple Sections
+-----------------------------------------------
 
 If the code in a macro section ends within a *suite* of a Python *compound statement*
 (see https://docs.python.org/3/reference/compound_stmts.html)
@@ -735,7 +814,7 @@ The template evaluates to:
     # $$ insert_content("tests/data/doc_compound_and_indentation.py")
  
 
-def-statement-suites spanning multiple sections
+Def-Statement Suites Spanning Multiple Sections
 -----------------------------------------------
 
 If the suite of a *def*-statement spans multiple sections, indentation of
@@ -771,7 +850,7 @@ suite of the *def* statement. Like that, valid indentation is established.
 Debugging
 ---------
 
-Error messages
+Error Messages
 ..............
 
 In case something goes wrong, *pymacros4py* tries to give helpful error messages.
@@ -867,7 +946,7 @@ cannot handle this version-specific deviation of the results. So, above, we only
 check that the expected exception occurs.)
 
 
-Comparing results
+Comparing Results
 .................
 
 Method *expand_file_to_file* offers an option *diffs_to_result_file* that returns
@@ -900,7 +979,7 @@ Now, we compare against the result we have gotten there:
     <BLANKLINE>
 
 
-Viewing the template script
+Viewing the Template Script
 ...........................
 
 When an exception is raised during the execution of a generated template script,
@@ -995,6 +1074,11 @@ the expansion result instead of storing it to a file.
 
 Changelog
 .........
+
+**v0.8.3** (2025-04-11)
+
+- Code adapted to new, stricter tests of *flake8*.
+- README.rst extended by chapter *first examples*.
 
 **v0.8.2** (2024-03-12)
 

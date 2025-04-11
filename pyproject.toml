@@ -1,6 +1,6 @@
 [project]
 name = "pymacros4py"
-version = "0.8.2"
+version = "0.8.3"
 authors = [
   { name="Dr. Helmut Melcher", email="HeWeMel@web.de" },
 ]
