@@ -2,4 +2,5 @@
 black
 coverage>=6.3
 flake8
-mypy
+# (since 1.19.0., temporarily, mypy does not support PyPy anymore)
+mypy ; implementation_name == "cpython"

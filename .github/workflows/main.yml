@@ -59,6 +59,7 @@ jobs:
           # stop the build if there are flake8 errors (E203,W505 not compatible to black)
           flake8 --extend-ignore=E203,W503 --max-line-length=88 --exclude=tests/data src tests
       - name: Type check package source with mypy
+        if: ${{ !startsWith(matrix.python-version, 'pypy') }}
         run: |
           mypy src/pymacros4py tests --show-error-codes --disallow-untyped-defs --exclude tests/data
       - name: Check source code formatting with Black
