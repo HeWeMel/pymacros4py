@@ -4,7 +4,6 @@ import subprocess
 from typing import TypeAlias, Optional
 from dataclasses import dataclass, asdict
 
-
 FileName: TypeAlias = str | bytes | os.PathLike
 
 
